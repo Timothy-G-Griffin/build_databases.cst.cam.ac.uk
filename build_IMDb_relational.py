@@ -1,5 +1,5 @@
 import csv 
-
+import os 
 #	       
 # build_IMDb_relational.py
 #
@@ -59,17 +59,25 @@ rating_cutfoff = 7
 votes_needed_for_movie   = 50000
 votes_needed_for_tvmovie = 1000
 bar      = "|"
+source_dir = "IMDb_raw/" 
+target_dir = "IMDb_relational/"
 
-movies_in_file     = "IMDb_raw/title.basics.tsv"
-ratings_in_file    = "IMDb_raw/title.ratings.tsv"
-positions_in_file  = "IMDb_raw/title.principals.tsv";
-people_in_file     = "IMDb_raw/name.basics.tsv"
+movies_in_file     = source_dir + "title.basics.tsv"
+ratings_in_file    = source_dir + "title.ratings.tsv"
+positions_in_file  = source_dir + "title.principals.tsv";
+people_in_file     = source_dir + "name.basics.tsv"
 
-movies_out_file    = "IMDb_relational/movies.dsv"
-genres_out_file    = "IMDb_relational/has_genre.dsv"
-positions_out_file = "IMDb_relational/has_position.dsv";
-roles_out_file     = "IMDb_relational/plays_role.dsv";
-people_out_file    = "IMDb_relational/people.dsv"
+movies_out_file    = target_dir + "movies.dsv"
+genres_out_file    = target_dir + "has_genre.dsv"
+positions_out_file = target_dir + "has_position.dsv";
+roles_out_file     = target_dir + "plays_role.dsv";
+people_out_file    = target_dir + "people.dsv"
+
+# create target dir if it does not exist         
+if not os.path.exists(target_dir):
+    os.mkdir(target_dir)
+    print("Creating directory " , target_dir ,  " ...")
+
     
 print("... filtering movies ...");
 # title.basics.tsv - Contains the following information for titles:

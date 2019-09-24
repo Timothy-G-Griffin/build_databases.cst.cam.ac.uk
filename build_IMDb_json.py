@@ -24,7 +24,7 @@ with open('IMDb_relational/movies.dsv', mode='r') as csvfile:
 
 genres = {}
 
-with open('IMDb_relational/genres.dsv', mode='r') as csvfile:
+with open('IMDb_relational/has_genre.dsv', mode='r') as csvfile:
     genresCSV = csv.DictReader(csvfile, delimiter='|')
     for row in genresCSV:
         genre = row["genre"]
@@ -59,10 +59,10 @@ directors = {}
 producers = {}
 writers = {}
 
-with open('IMDb_relational/credits.dsv', mode='r') as csvfile: 
+with open('IMDb_relational/has_position.dsv', mode='r') as csvfile: 
     creditsCSV = csv.DictReader(csvfile, delimiter='|')
     for row in creditsCSV:
-        c         = row["category"]
+        c         = row["position"]
         movie_id  = row["movie_id"]
         person_id = row["person_id"]
         _person = people[person_id]
@@ -118,10 +118,10 @@ directed = {}
 produced = {}
 wrote_for = {}
 
-with open('IMDb_relational/credits.dsv', mode='r') as csvfile: 
+with open('IMDb_relational/has_position.dsv', mode='r') as csvfile: 
     creditsCSV = csv.DictReader(csvfile, delimiter='|')
     for row in creditsCSV:
-        c         = row["category"]
+        c         = row["position"]
         movie_id  = row["movie_id"]
         person_id = row["person_id"]
         movie = movies_copy[movie_id]
@@ -169,12 +169,18 @@ for person_id in people.keys():
         p["produced"] = produced[person_id]
 
 
-movies_file_path = 'pyDocDB/data/movies.pickled'         
+# create target dir if it does not exist
+target_dir = 'DOCtorWho/data/' 
+if not os.path.exists(target_dir):
+    os.mkdir(target_dir)
+    print("Creating directory " , target_dir ,  " ...")
+        
+movies_file_path = target_dir + 'movies.pickled'         
 if os.path.exists(movies_file_path):
     os.remove(movies_file_path)
 
-people_file_path = 'IMDb_json/people.pickled'    
-if os.path.exists(peole_file_path):
+people_file_path = target_dir + 'people.pickled'    
+if os.path.exists(people_file_path):
     os.remove(people_file_path)
   
 with open(movies_file_path, mode= "wb") as moviesFile:

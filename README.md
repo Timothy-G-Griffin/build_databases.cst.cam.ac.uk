@@ -36,12 +36,12 @@ Instructions for constructing databases
    (Note to self: someday modify scripts below so that they read tsv files directly from compressed .gz files ...) 
 
 2) run "python3.5 build_IMDb_relational.py" 
-   This creates *.dsv files in IMDb_relational/
+   This creates the directory IMDb_relational/ and places *.dsv files in it. 
    Read comments in build_IMDb_relational.py. 
 
 3) run script hsqldb_load.sh
    This invokes HyperSql to execute hsqldb_load.sql, creating database
-   in relational-db from the files in IMDb_relational/
+   from the *.dsv files in IMDb_relational.
 
 NOTE: there are two useful scripts for testing:
 
