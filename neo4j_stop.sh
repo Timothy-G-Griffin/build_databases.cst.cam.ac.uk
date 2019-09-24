@@ -1,0 +1,6 @@
+#!/bin/sh
+
+NEO4J="$NEO4JBINPATH/neo4j"
+COMMAND="$NEO4J stop" 
+echo $COMMAND
+$COMMAND

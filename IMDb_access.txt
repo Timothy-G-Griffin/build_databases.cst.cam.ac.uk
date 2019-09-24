@@ -1,0 +1,26 @@
+IMDb datasets, providing bulk-access to IMDb title and name data, are now available from us via an HTTPS link.
+
+	https://datasets.imdbws.com/d
+
+As a previous ftp user you can just switch to https, however there are some formatting changes within the data.
+
+For details on the new file formats and access guidelines, see www.imdb.com/interfaces.
+
+In our continued effort to best serve our Contributors, we have streamlined the datasets and made them available in
+a more useful and structured format. Notably:
+
+* Data refresh frequency is now daily (previously weekly).
+* IMDb title and name identifiers are included in all the files for ease of matching and linking back to IMDb.
+* The files are in tab separated values (TSV) format.
+* The sets of data we provide are updated to only include the essential ones that help with matching and linking to
+  an IMDb title or name.
+* AKA Titles have been added to the basic dataset, and further extended datasets are also being developed to assist
+  contributors.
+* As part of housekeeping the FTP site, the data files there will no longer be updated.
+
+If you are not an IMDb Contributor and wish to obtain IMDb content for commercial use, we offer a content license.
+The license grants you access to our content via an XML web service, plus the right to use the content in your product
+or service.  If that interests you, please email licensing@imdb.com.
+
+If you have any questions, please contact us via this getsatisfaction thread -
+https://getsatisfaction.com/imdb/topics/imdb-data-now-available-in-amazon-s3
