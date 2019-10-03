@@ -50,6 +50,7 @@ import os
 #    has_position.tsv
 #    plays_role.tsv
 #    has_genre.tsv
+#    genres.tsv 
 #
 # We want recent movies: 
 start_year     = 2000
@@ -67,11 +68,12 @@ ratings_in_file    = source_dir + "title.ratings.tsv"
 positions_in_file  = source_dir + "title.principals.tsv";
 people_in_file     = source_dir + "name.basics.tsv"
 
-movies_out_file    = target_dir + "movies.dsv"
-genres_out_file    = target_dir + "has_genre.dsv"
-positions_out_file = target_dir + "has_position.dsv";
-roles_out_file     = target_dir + "plays_role.dsv";
-people_out_file    = target_dir + "people.dsv"
+movies_out_file     = target_dir + "movies.dsv"
+has_genre_out_file = target_dir + "has_genre.dsv"
+genres_out_file     = target_dir + "genres.dsv"
+positions_out_file  = target_dir + "has_position.dsv";
+roles_out_file      = target_dir + "plays_role.dsv";
+people_out_file     = target_dir + "people.dsv"
 
 # create target dir if it does not exist         
 if not os.path.exists(target_dir):
@@ -139,12 +141,16 @@ with open(ratings_in_file, mode='r') as csvfile:
                 rate[line['tconst'] + bar + 'numVotes']      = line['numVotes']            
 
 print("... generating movies, genres ...")
-movies_out = open(movies_out_file, "w")
-genres_out = open(genres_out_file, "w")
+movies_out     = open(movies_out_file, "w")
+has_genre_out  = open(has_genre_out_file, "w")
+genres_out     = open(genres_out_file, "w")
+genre_to_id = {}
+next_genre_id = 1 
 
 # write headers 
 print(bar.join(["movie_id","title", "year", "type", "minutes", "rating", "votes"]), file=movies_out)
-print(bar.join(["movie_id", "genre"]), file=genres_out)
+print(bar.join(["movie_id", "genre_id"]), file=has_genre_out)
+print(bar.join(["genre_id", "genre"]), file=genres_out)
 for key in keep.keys(): 
     keyb = key + bar 
     print (
@@ -160,8 +166,14 @@ for key in keep.keys():
     )
     genres = movies[keyb + 'genres']
     if genres != '\\N': 
-       for g in genres.split(','): 
-          print(bar.join([key, g]), file=genres_out)
+       for g in genres.split(','):
+           if g in genre_to_id.keys():
+               print(bar.join([key, str(genre_to_id[g])]), file=has_genre_out)
+           else:
+               print(bar.join([key, str(next_genre_id)]), file=has_genre_out)               
+               print(bar.join([str(next_genre_id), g]), file=genres_out)
+               genre_to_id[g] = next_genre_id 
+               next_genre_id = next_genre_id + 1 
                
 print ("... processing positions, roles ...")
 # 

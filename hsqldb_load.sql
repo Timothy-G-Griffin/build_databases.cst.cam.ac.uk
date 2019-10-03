@@ -1,9 +1,8 @@
 
 drop view  if exists romcom_ids; 
-drop table if exists genres;
-drop table if exists credits;
 
 drop table if exists has_genre;
+drop table if exists genres;
 drop table if exists has_position;
 drop table if exists plays_role;
 drop table if exists people;
@@ -32,8 +31,10 @@ birthYear integer,
 deathYear integer
 ); 
 
--- credits
-
+-- has_position 
+-- note: column 'position' should really be a part of
+-- the key.  But current IMDb data has only one position
+-- per (person_id, movie_id). Grrr. 
 CREATE TABLE has_position (
 person_id  varchar(16) NOT NULL REFERENCES people (person_id), 
 movie_id  varchar(16) NOT NULL REFERENCES movies (movie_id), 
@@ -42,9 +43,6 @@ PRIMARY KEY (person_id, movie_id)
 ); 
 
 -- roles
-
-
-
 CREATE TABLE plays_role (
 person_id varchar(16) NOT NULL REFERENCES people (person_id), 
 movie_id varchar(16) NOT NULL REFERENCES movies (movie_id), 
@@ -52,14 +50,21 @@ role varchar(255) NOT NULL,
 PRIMARY KEY (person_id, movie_id, role) 
 ); 
 
-
 -- genres
 
-create table has_genre (
-   movie_id varchar(16) NOT NULL,
+create table genres (
+   genre_id integer NOT NULL,
    genre varchar(100) NOT NULL,
-   PRIMARY KEY (movie_id, genre)    
+   PRIMARY KEY (genre_id)    
 );
+
+create table has_genre (
+   movie_id varchar(16) NOT NULL REFERENCES movies (movie_id), 
+   genre_id integer NOT NULL REFERENCES genres (genre_id), 
+   PRIMARY KEY (movie_id, genre_id)    
+);
+
+
 
 commit;
 
@@ -76,6 +81,12 @@ commit;
 * *DSV_TARGET_TABLE = people
 
 \m IMDb_relational/people.dsv
+
+commit;
+
+* *DSV_TARGET_TABLE = genres
+
+\m IMDb_relational/genres.dsv
 
 commit; 
 

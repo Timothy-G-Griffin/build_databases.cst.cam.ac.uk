@@ -1,4 +1,4 @@
 #!/bin/bash
 
-java -jar $HSQLDBPATH/sqltool.jar db1a 
+java -jar $HSQLDBPATH/sqltool.jar --rcfile=sqltool.rc db1a 
 

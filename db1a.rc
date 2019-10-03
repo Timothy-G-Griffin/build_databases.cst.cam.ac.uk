@@ -8,11 +8,18 @@ urlid .+
 username SA
 password
 
+# Download movies-relational.gz (or .zip) from the course website and
+# uncompress it. This will produce a directory movies-relational. 
+#
 # Windows users are advised to use forward slashes instead of back-slashes,
 # and to avoid paths containing spaces or other funny characters.  
-
-# A personal, local, persistent database.
-# Inherits username and password from default setting above.
+#
 urlid db1a 
-url jdbc:hsqldb:file:/home/tgg22/working/lectures/db1A/hsqldb-2.5.0/hsqldb/data/movies;shutdown=true
+url jdbc:hsqldb:file:<YOUR PATH TO DATA>/movies-relational;shutdown=true
 transiso TRANSACTION_READ_COMMITTED
+
+# Now you can run (in the directory where this db1a.rc file is stored) this command 
+#
+# java -jar <Path to HyperSQL lib directory>/sqltool.jar --rcfile=db1a.rc db1a
+#
+# 
