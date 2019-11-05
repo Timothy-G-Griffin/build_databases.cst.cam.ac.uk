@@ -64,13 +64,6 @@ NOTE: for cypher documentation see https://neo4j.com/docs/cypher-manual/current
    This creates DOCtorWho/data/movies.pickled and DOCtorWho/data/people.pickled
    from IMDb_relational/*.dsv files.
 
-NOTE: several query example files are provided in pyDocDB: 
+NOTE: several query example files are provided in DOCtorWho/*py
 
-pyDocDB_get_movie.py  : prints out json representation of a movie.
-                        Try "python3.5 pyDocDB_get_movie.py tt1045658"
-
-pyDocDB_get_person.py  : prints out json representation of a person.
-                         Try "python3.5 pyDocDB_get_person.py nm2225369"
-
-pyDocDB_example.py  : 
                       

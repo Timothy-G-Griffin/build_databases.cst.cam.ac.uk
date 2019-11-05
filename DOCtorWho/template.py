@@ -19,18 +19,9 @@ peopleFile = open(people_path, mode= "rb")
 people     = pickle.load(peopleFile)
 
 #####################################
-# write your query code here ...
+# write your query code here ... 
 
-def get_person_by_name (str): 
-    # initialise output 
-    the_person = {} 
-    # iterate through all the keys of the people dictionary 
-    # looking for one with the right name 
-    for person_id in people.keys():
-        if people[person_id]['name'] == str: 
-            the_person = people[person_id]
-    return the_person 
+#arg2    = sys.argv[2] # second command-line argument
+#arg3    = sys.argv[3] # third command-line argument
 
-name    = sys.argv[2] 
-
-pprint.pprint (get_person_by_name(name))
+# ...  

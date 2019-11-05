@@ -14,5 +14,5 @@ password
 # A personal, local, persistent database.
 # Inherits username and password from default setting above.
 urlid db1a 
-url jdbc:hsqldb:file:/home/tgg22/working/lectures/db1A/hsqldb-2.5.0/hsqldb/data/movies;shutdown=true
+url jdbc:hsqldb:file:/home/tgg22/working/lectures/db1A/build_databases.cst.cam.ac.uk/movies-relational/movies;shutdown=true
 transiso TRANSACTION_READ_COMMITTED

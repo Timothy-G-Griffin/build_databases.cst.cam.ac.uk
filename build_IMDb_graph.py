@@ -11,7 +11,8 @@ target_dir = "IMDb_graph/"
 
 movies_in_file   = source_dir + "movies.dsv"
 people_in_file   = source_dir + "people.dsv"
-genres_in_file   = source_dir + "has_genre.dsv"
+has_genre_in_file = source_dir + "has_genre.dsv"
+genres_in_file   = source_dir + "genres.dsv"
 roles_in_file    = source_dir + "plays_role.dsv"
 credits_in_file  = source_dir + "has_position.dsv"
 
@@ -27,18 +28,22 @@ if not os.path.exists(target_dir):
     os.mkdir(target_dir)
     print("Creating directory " , target_dir ,  " ...")
 
-
+genres = {} 
 genres_map = {}
 
 with open(genres_in_file, mode='r') as g_in:
     genresCSV = csv.DictReader(g_in, delimiter=bar)
     for row in genresCSV:
-        genre = row["genre"]
+        genres[row['genre_id']] = row['genre']
+
+with open(has_genre_in_file, mode='r') as g_in:
+    genresCSV = csv.DictReader(g_in, delimiter=bar)
+    for row in genresCSV:
         if row["movie_id"] in genres_map.keys():
             l = genres_map[row["movie_id"]]
         else:
             l = []
-        l.append(genre) 
+        l.append(genres[row['genre_id']]) 
         genres_map[row["movie_id"]] = l
 
     
@@ -60,8 +65,7 @@ with open(movies_in_file, "r") as m_in:
         for row in moviesCSV:
             movie_id = row["movie_id"]
             if movie_id in genres_map.keys():
-                genres = genres_map[movie_id]
-                genres_str = ";".join(genres)
+                genres_str = ";".join(genres_map[movie_id])
             else:
                 genres_str = ""
             row_out = bar.join([movie_id,
@@ -130,9 +134,10 @@ with open(credits_in_file, mode='r') as c_in:
             if roles_key in plays_role.keys():
                 roles = plays_role[roles_key]
                 roles_str = ";".join(roles)
-            else:
-                roles_str = ""
-            acted_in = bar.join([person_id, movie_id, roles_str, "ACTED_IN"])
+                acted_in = bar.join([person_id, movie_id, roles_str, "ACTED_IN"])
+                print(acted_in, file=acted_in_out)
+        elif c == 'self':
+            acted_in = bar.join([person_id, movie_id, "Self", "ACTED_IN"])                        
             print(acted_in, file=acted_in_out)
         elif c == 'director':
             directed = bar.join([person_id, movie_id, "DIRECTED"])

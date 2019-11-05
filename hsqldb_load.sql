@@ -10,6 +10,8 @@ drop table if exists movies;
 
 -- create tables for movie database
 
+SET DEFAULT TABLE TYPE CACHED
+
 -- movies
 
 CREATE TABLE movies (

@@ -15,7 +15,7 @@ password
 # and to avoid paths containing spaces or other funny characters.  
 #
 urlid db1a 
-url jdbc:hsqldb:file:<YOUR PATH TO DATA>/movies-relational;shutdown=true
+url jdbc:hsqldb:file:<YOUR PATH TO DATA>/movies-relational/movies;shutdown=true
 transiso TRANSACTION_READ_COMMITTED
 
 # Now you can run (in the directory where this db1a.rc file is stored) this command 
