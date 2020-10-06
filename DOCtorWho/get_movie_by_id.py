@@ -21,13 +21,13 @@ people     = pickle.load(peopleFile)
 #####################################
 # write your query code here ...
 
-def get_movie_by_id (str): 
+def get_movie_by_id (name): 
     # initialise output 
     the_movie = {} 
     # Check that str is a movies key 
-    if str in movies.keys():
+    if name in movies.keys():
         # get the movie with that key 
-        the_movie = movies[str]
+        the_movie = movies[name]
     return the_movie 
 
 id    = sys.argv[2] # get the second argument 

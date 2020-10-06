@@ -38,13 +38,13 @@ people = pickle.load(peopleFile)
 # +------------------------------------------+
 #
 
-def get_movie_by_title (str): 
+def get_movie_by_title (name): 
     # initialise output movie 
     the_movie = {} 
     # iterate through all the keys of the movie dictionary 
     # looking for one with the right title 
     for movie_id in movies.keys():
-        if movies[movie_id]['title'] == str:
+        if movies[movie_id]['title'] == name:
             the_movie = movies[movie_id]
             break
     return the_movie 

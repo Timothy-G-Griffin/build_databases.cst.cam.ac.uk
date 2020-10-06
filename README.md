@@ -1,4 +1,4 @@
-September 2019.
+September 2020.
 Timothy G. Griffin
 University of Cambridge
 tgg22@cam.ac.uk
@@ -33,11 +33,12 @@ Instructions for constructing databases
 1) run "python3.5 build_IMDb_raw.py"
    This will fetch IMDb *.tsv.gz data files into IMDb_raw from https://datasets.imdbws.com (See IMDb_access.txt)
    and then uncompress them.
-   (Note to self: someday modify scripts below so that they read tsv files directly from compressed .gz files ...) 
 
 2) run "python3.5 build_IMDb_relational.py" 
    This creates the directory IMDb_relational/ and places *.dsv files in it. 
-   Read comments in build_IMDb_relational.py. 
+   Read comments in build_IMDb_relational.py.  In particular, I have had
+   problems with unclosed quotes in the title.akas.tsv file which required
+   deleting some lines by hand. 
 
 3) run script hsqldb_load.sh
    This invokes HyperSql to execute hsqldb_load.sql, creating database
@@ -48,9 +49,17 @@ NOTE: there are two useful scripts for testing:
 hsqldb_gui.sh : pops up a (shabby) GUI interface for the relational database
 hsqldb_shell.sh : starts a interactive shell for the relational database
 
+========== document "database" =================
+
+6) run "python3.5 build_IMDb_json.py" 
+   This creates DOCtorWho/data/movies.pickled and DOCtorWho/data/people.pickled
+   from IMDb_relational/*.dsv files.
+
+NOTE: several query example files are provided in DOCtorWho/*py
+
 ========== graph database =================
 
-4) run "python3.5 build_IMDb_graph.pl" 
+4) run "python3.5 build_IMDb_graph.py" 
    This creates *.dsv files in IMDb_graph/ from files in IMDb_relational/
 
 5) run neo4j_load.sh
@@ -58,12 +67,9 @@ hsqldb_shell.sh : starts a interactive shell for the relational database
 
 NOTE: for cypher documentation see https://neo4j.com/docs/cypher-manual/current
 
-========== document "database" =================
+========== TO DO SOMEDAY =================
 
-6) run "python3.5 build_IMDb_json.pl" 
-   This creates DOCtorWho/data/movies.pickled and DOCtorWho/data/people.pickled
-   from IMDb_relational/*.dsv files.
-
-NOTE: several query example files are provided in DOCtorWho/*py
-
-                      
+1) learn how to write python code ;-) 
+2) modify scripts  so that they read *.tsv.gz files directly) 
+3) make code more robust wrt errors in the *.tsv files (like unmatched quotes)
+4) 

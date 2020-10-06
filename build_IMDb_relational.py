@@ -1,5 +1,8 @@
+
 import csv 
-import os 
+import os
+import iso3166 # for country names 
+import iso639  # for language names 
 #	       
 # build_IMDb_relational.py
 #
@@ -15,29 +18,30 @@ import os
 # title.ratings.tsv
 # Check www.imdb.com/interfaces for possible changes to files or file formats
 #
-# In September 2019 the line counts for these files were
-#  9,548,681 name.basics.tsv
-#  3,832,756 title.akas.tsv
-#  6,133,566 title.basics.tsv
-#  6,133,566 title.crew.tsv
-#  4,286,044 title.episode.tsv
-# 35,347,804 title.principals.tsv
-#    968,021 title.ratings.tsv
-# 66,253,652 total
-#
-# We can see the types of the titles:
-# cut -f 2 title.basics.tsv | sort | uniq -c 
-#  528835 movie
-#  699967 short
-# 4286232 tvEpisode
-#   27400 tvMiniSeries
-#  120542 tvMovie
-#  170669 tvSeries
-#   11022 tvShort
-#   24504 tvSpecial
-#  240395 video
-#   23999 videoGame
-#
+# On September 7 2020 the line counts for these files were
+# 10342842 name.basics.tsv
+# 23332150 title.akas.tsv
+#  7142835 title.basics.tsv
+#  7142835 title.crew.tsv
+#  5128103 title.episode.tsv
+# 40990137 title.principals.tsv
+#  1070628 title.ratings.tsv
+# 95149530 total
+
+# We can see the types of the titles (titleType column):
+# cut -f 2 title.basics.tsv | sort | uniq -c | sort -n
+#       1 titleType
+#   13145 tvShort
+#   26254 videoGame
+#   29538 tvSpecial
+#   33163 tvMiniSeries
+#  123384 tvMovie
+#  191700 tvSeries
+#  277756 video
+#  560373 movie
+#  759375 short
+# 5128146 tvEpisode
+
 # In order to make database that students can explore even on a low-powered laptop, we
 # will filter out much of this data.
 # Running this script will select all movies (movie or tvMovie) between years start-year end-year (inclusive) that have
@@ -54,19 +58,21 @@ import os
 #
 # We want recent movies: 
 start_year     = 2000
-end_year       = 2019
+end_year       = 2021
 # cut offs tuned to get around 1000 movies in total 
 rating_cutfoff = 7
 votes_needed_for_movie   = 50000
 votes_needed_for_tvmovie = 1000
+
 bar      = "|"
 source_dir = "IMDb_raw/" 
 target_dir = "IMDb_relational/"
 
 movies_in_file     = source_dir + "title.basics.tsv"
 ratings_in_file    = source_dir + "title.ratings.tsv"
-positions_in_file  = source_dir + "title.principals.tsv";
+positions_in_file  = source_dir + "title.principals.tsv"
 people_in_file     = source_dir + "name.basics.tsv"
+alternative_title_in_file = source_dir + "title.akas.tsv"
 
 movies_out_file     = target_dir + "movies.dsv"
 has_genre_out_file = target_dir + "has_genre.dsv"
@@ -74,6 +80,16 @@ genres_out_file     = target_dir + "genres.dsv"
 positions_out_file  = target_dir + "has_position.dsv";
 roles_out_file      = target_dir + "plays_role.dsv";
 people_out_file     = target_dir + "people.dsv"
+language_out_file   = target_dir + "language.dsv"
+country_out_file    = target_dir + "country.dsv"
+has_alternative_title_out_file = target_dir + "has_alternative.dsv"
+
+# these codes some to be missing form the iso639 module 
+fix_iso639 = {}
+fix_iso639['cmn'] = 'Mandarin Chinese'
+fix_iso639['qbp'] = 'ISO-639 Reserved for local use'
+fix_iso639['qbn'] = 'ISO-639 Reserved for local use'
+fix_iso639['yue'] = 'Yue Chinese'
 
 # create target dir if it does not exist         
 if not os.path.exists(target_dir):
@@ -100,23 +116,26 @@ movies = {}
 with open(movies_in_file, mode='r') as csvfile:
     moviesCSV = csv.DictReader(csvfile, delimiter='\t')
     for line in moviesCSV:
-        # int(line['startYear'], 10) can fail when line['startYear'] is '\N' (null) 
+        # note that int(line['startYear']) can fail when line['startYear'] is '\N' (null) 
         try: 
             if (     ((line['titleType'] == 'movie') or (line['titleType'] == 'tvMovie'))
-                 and (int(line['isAdult'], 10) == 0)
-                 and (int(line['startYear'], 10) >= start_year)
+                 and (int(line['isAdult']) == 0)
+                 and (int(line['startYear']) >= start_year)
                  and (end_year >= int(line['startYear'], 10))): 
                 movies[line['tconst'] + bar + 'primaryTitle'] = line['primaryTitle']
                 movies[line['tconst'] + bar + 'year']         = line['startYear']
                 movies[line['tconst'] + bar + 'genres']       = line['genres']
                 movies[line['tconst'] + bar + 'type']         = line['titleType']
-                movies[line['tconst'] + bar + 'minutes']      = line['runtimeMinutes']
+                if line['runtimeMinutes'] != '\\N': 
+                    movies[line['tconst'] + bar + 'minutes']  = line['runtimeMinutes']
+                else:
+                    movies[line['tconst'] + bar + 'minutes']  = ""
                 mcount = mcount + 1
         except:
             pass 
 
 print ("... processing ratings ...")
-# title.ratings.tsv.gz – Contains the IMDb rating and votes information for titles
+# title.ratings.tsv – Contains the IMDb rating and votes information for titles
 # ------------------------------------------------------------------------------
 # tconst (string) - alphanumeric unique identifier of the title
 # averageRating   – weighted average of all the individual user ratings
@@ -173,11 +192,90 @@ for key in keep.keys():
                print(bar.join([key, str(next_genre_id)]), file=has_genre_out)               
                print(bar.join([str(next_genre_id), g]), file=genres_out)
                genre_to_id[g] = next_genre_id 
-               next_genre_id = next_genre_id + 1 
+               next_genre_id = next_genre_id + 1
+
+
+print("... processing alternative titles ...")
+#
+# title.akas.tsv - Contains the following information for titles:
+# ----------------------------------------------------------------------
+# titleId (string) - a tconst, an alphanumeric unique identifier of the title
+# ordering (integer) – a number to uniquely identify rows for a given titleId
+# title (string) – the localized title
+# region (string) - the region for this version of the title
+# language (string) - the language of the title
+# types (array) - Enumerated set of attributes for this alternative title.
+#                 One or more of the following: "alternative", "dvd", "festival", "tv", "video", "working", "original", "imdbDisplay". 
+#                 New values may be added in the future without warning
+# attributes (array) - Additional terms to describe this alternative title, not enumerated
+# isOriginalTitle (boolean) – 0: not original title; 1: original title
+
+has_alt_out = open(has_alternative_title_out_file, "w")
+country = {}
+language = {} 
+rowkey = {}
+# write header
+print(bar.join(["movie_id", "alt_id", "title", "country_code", "language_code", "is_original"]), file=has_alt_out)
+#
+# Warning: Sometimes ththe file title.akas.tsv contains bugs like non-closed quotes.  Such things
+# can cause DictReader to raise an exception.  Offending lines must then be removed by hand. 
+#
+with open(alternative_title_in_file, mode='r') as csvfile:
+    altCSV = csv.DictReader(csvfile, delimiter='\t')
+    try: 
+        for line in altCSV:
+            key = line['titleId']
+            if key in keep.keys():
+                country_code   = line['region']
+                language_code = line['language']
+                original = line['isOriginalTitle']            
+                if (country_code == '\\N'):
+                   country_code = ''                    
+                else:
+                    try:
+                        country[country_code] = iso3166.countries.get(country_code).name
+                    except:
+                        country[country_code] = "Not an ISO-3166 country?"    # tgg22 : I was not able to fix these                                 
+                if (language_code == '\\N'):
+                     language_code = ''
+                else:
+                    try:
+                        language[language_code] = iso639.find(language_code)['name']
+                    except:
+                        language[language_code] = fix_iso639[language_code] # "Not an ISO-639 language?"
+                if (original == '\\N'):
+                    original = '' 
+                else:
+                    if (original == "0"):
+                        original = "false"
+                    else:
+                        original = "true"
+                if key in rowkey.keys():
+                    rowkey[key] = rowkey[key] + 1
+                else:
+                    rowkey[key] = 0 
+                print(bar.join([key, str(rowkey[key]), line['title'], country_code, language_code, original]), file=has_alt_out)
+                    
+    except csv.Error as e:
+        print('ERROR on line {}: {}'.format(altCSV.line_num, e))
+        exit() 
+               
+language_out = open(language_out_file, "w")
+country_out  = open(country_out_file, "w")
+# write headers
+print(bar.join(["code", "name"]), file=language_out)
+print(bar.join(["code", "name"]), file=country_out)
+
+for key in language.keys():
+    print(bar.join([key, language[key]]), file=language_out)
+
+for key in country.keys():
+    print(bar.join([key, country[key]]), file=country_out)
+    
                
 print ("... processing positions, roles ...")
 # 
-# title.principals.tsv.gz – Contains the principal cast/crew for titles
+# title.principals.tsv – Contains the principal cast/crew for titles
 # ---------------------------------------------------------------------
 # tconst (string)     - alphanumeric unique identifier of the title
 # ordering (integer)  – a number to uniquely identify rows for a given titleId
@@ -280,39 +378,27 @@ with open(people_in_file, mode='r') as csvfile:
             birth_year = line['birthYear']
             death_year = line['deathYear']
             if (birth_year == '\\N'):
-                birth_year = ""
+                birth_year = ''
             if (death_year == '\\N'):
-                death_year = ""
+                death_year = '' 
             print(bar.join([key, line['primaryName'], birth_year, death_year]), file=people_out)
+
+
 
 print ("... DONE!")
 
 
-                            
+
 # files not currently used: 
 
-# title.akas.tsv.gz - Contains the following information for titles:
-# ----------------------------------------------------------------------
-# titleId (string) - a tconst, an alphanumeric unique identifier of the title
-# ordering (integer) – a number to uniquely identify rows for a given titleId
-# title (string) – the localized title
-# region (string) - the region for this version of the title
-# language (string) - the language of the title
-# types (array) - Enumerated set of attributes for this alternative title.
-#                 One or more of the following: "alternative", "dvd", "festival", "tv", "video", "working", "original", "imdbDisplay". 
-#                 New values may be added in the future without warning
-# attributes (array) - Additional terms to describe this alternative title, not enumerated
-# isOriginalTitle (boolean) – 0: not original title; 1: original title
-
-
-# title.crew.tsv.gz – Contains the director and writer information for all the titles in IMDb. Fields include:
+# title.crew.tsv – Contains the director and writer information for all the titles in IMDb. Fields include:
 # ----------------------------------------------------------------------------------------------------------
 # tconst (string) - alphanumeric unique identifier of the title
 # directors (array of nconsts) - director(s) of the given title
 # writers (array of nconsts) – writer(s) of the given title
 
 
-# title.episode.tsv.gz – Contains the tv episode information. Fields include:
+# title.episode.tsv – Contains the tv episode information. Fields include:
 # ---------------------------------------------------------------------------
 # tconst (string) - alphanumeric identifier of episode
 # parentTconst (string) - alphanumeric identifier of the parent TV Series

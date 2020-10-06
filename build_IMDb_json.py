@@ -227,7 +227,7 @@ for movie_id in movies.keys():
     movies_final[movie_id] = movie
 
 # testing     
-pprint.pprint (movies_final['tt1045658']) # Silver Linings Playbook
+#pprint.pprint (movies_final['tt1045658']) # Silver Linings Playbook
 
 
 movies_file_path = target_dir + 'movies.pickled'         
