@@ -1,4 +1,4 @@
-September 2020.
+September 2021.
 Timothy G. Griffin
 University of Cambridge
 tgg22@cam.ac.uk
@@ -38,9 +38,10 @@ Instructions for constructing databases
    This creates the directory IMDb_relational/ and places *.dsv files in it. 
    Read comments in build_IMDb_relational.py.  In particular, I have had
    problems with unclosed quotes in the title.akas.tsv file which required
-   deleting some lines by hand. 
+   deleting some lines by hand. (I reported the problem to the IMDb folks in 2020,
+   and it now seems to be fixed.) 
 
-3) run script hsqldb_load.sh
+3) run script hsqldb_load.sh (./hsqldb_load.sh)
    This invokes HyperSql to execute hsqldb_load.sql, creating database
    from the *.dsv files in IMDb_relational.
 
@@ -72,4 +73,3 @@ NOTE: for cypher documentation see https://neo4j.com/docs/cypher-manual/current
 1) learn how to write python code ;-) 
 2) modify scripts  so that they read *.tsv.gz files directly) 
 3) make code more robust wrt errors in the *.tsv files (like unmatched quotes)
-4) 

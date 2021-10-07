@@ -1,6 +1,7 @@
 -- remove views
 
 drop view if exists bacon_numbers;
+drop view if exists bacon_number_9;
 drop view if exists bacon_number_8;
 drop view if exists bacon_number_7;
 drop view if exists bacon_number_6;
@@ -306,6 +307,21 @@ create view bacon_number_8 as
   and not(ca.pid2 in (select pid from bacon_number_6))
   and not(ca.pid2 in (select pid from bacon_number_7));
 
+create view bacon_number_9 as 
+  select distinct ca.pid2 as pid, 
+                  9 as bacon_number 
+  from bacon_number_8 as bn8
+  join coactors as ca on ca.pid1 = bn8.pid 
+  where ca.pid2 <> 'nm0000102' 
+  and not(ca.pid2 in (select pid from bacon_number_1))
+  and not(ca.pid2 in (select pid from bacon_number_2))
+  and not(ca.pid2 in (select pid from bacon_number_3))
+  and not(ca.pid2 in (select pid from bacon_number_4))
+  and not(ca.pid2 in (select pid from bacon_number_5))
+  and not(ca.pid2 in (select pid from bacon_number_6))
+  and not(ca.pid2 in (select pid from bacon_number_7))
+  and not(ca.pid2 in (select pid from bacon_number_8));  
+
 create view bacon_numbers as 
    select * from bacon_number_1
    union 
@@ -321,7 +337,9 @@ create view bacon_numbers as
    union 
    select * from bacon_number_7 
    union 
-   select * from bacon_number_8 ;
+   select * from bacon_number_8 
+   union 
+   select * from bacon_number_9 ;   
 
 commit;
 

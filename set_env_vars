@@ -1,3 +1,3 @@
-export HSQLDBPATH="/home/tgg22/working/lectures/db1A/hsqldb-2.5.1/hsqldb/lib" 
-export NEO4JBINPATH="/home/tgg22/working/lectures/db1A/neo4j-community-4.1.3/bin" 
-export NEO4JDATAPATH="/home/tgg22/working/lectures/db1A/neo4j-community-4.1.3/data/databases"
+export HSQLDBPATH="/home/tgg22/working/lectures/db1A/hsqldb-2.6.0/hsqldb/lib" 
+export NEO4JBINPATH="/home/tgg22/working/lectures/db1A/neo4j-community-4.3.5/bin" 
+export NEO4JDATAPATH="/home/tgg22/working/lectures/db1A/neo4j-community-4.3.5/data/databases"

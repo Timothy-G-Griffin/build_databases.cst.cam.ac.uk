@@ -18,29 +18,32 @@ import iso639  # for language names
 # title.ratings.tsv
 # Check www.imdb.com/interfaces for possible changes to files or file formats
 #
-# On September 7 2020 the line counts for these files were
-# 10342842 name.basics.tsv
-# 23332150 title.akas.tsv
-#  7142835 title.basics.tsv
-#  7142835 title.crew.tsv
-#  5128103 title.episode.tsv
-# 40990137 title.principals.tsv
-#  1070628 title.ratings.tsv
-# 95149530 total
+# On September 26 2021 the line counts for these files were
+ #  11248903 name.basics.tsv
+ #  29237083 title.akas.tsv
+ #   8297464 title.basics.tsv
+ #   8297464 title.crew.tsv
+ #   6090072 title.episode.tsv
+ #  46955085 title.principals.tsv
+ #   1188971 title.ratings.tsv
+ # 111315042 total
 
 # We can see the types of the titles (titleType column):
 # cut -f 2 title.basics.tsv | sort | uniq -c | sort -n
+#       1 radioEpisode
 #       1 titleType
-#   13145 tvShort
-#   26254 videoGame
-#   29538 tvSpecial
-#   33163 tvMiniSeries
-#  123384 tvMovie
-#  191700 tvSeries
-#  277756 video
-#  560373 movie
-#  759375 short
-# 5128146 tvEpisode
+#       1 tvPilot
+#   10297 tvShort
+#   29318 videoGame
+#   34200 tvSpecial
+#   39912 tvMiniSeries
+#  133089 tvMovie
+#  215673 tvSeries
+#  322799 video
+#  589163 movie
+#  832751 short
+# 6090259 tvEpisode
+
 
 # In order to make database that students can explore even on a low-powered laptop, we
 # will filter out much of this data.
@@ -48,7 +51,7 @@ import iso639  # for language names
 # ratings not lower than rating-cutoff with at least votes-needed number of votes.
 # Adult titles will be excluded.
 # 
-# It will generate files in IMDb_relational: 
+# It will generate files in directory IMDb_relational: 
 #    movies.tsv   
 #    people.tsv
 #    has_position.tsv
@@ -58,7 +61,7 @@ import iso639  # for language names
 #
 # We want recent movies: 
 start_year     = 2000
-end_year       = 2021
+end_year       = 2022
 # cut offs tuned to get around 1000 movies in total 
 rating_cutfoff = 7
 votes_needed_for_movie   = 50000
@@ -84,7 +87,7 @@ language_out_file   = target_dir + "language.dsv"
 country_out_file    = target_dir + "country.dsv"
 has_alternative_title_out_file = target_dir + "has_alternative.dsv"
 
-# these codes some to be missing form the iso639 module 
+# these codes seem to be missing form the iso639 module 
 fix_iso639 = {}
 fix_iso639['cmn'] = 'Mandarin Chinese'
 fix_iso639['qbp'] = 'ISO-639 Reserved for local use'
